@@ -1,0 +1,5 @@
+# Adding api_keys.py file to avoid sharing keys + other unnecessary files to keep a clean repo
+api_keys.py
+*.ipynb_checkpoints
+.DS_Store
+__pycache__
