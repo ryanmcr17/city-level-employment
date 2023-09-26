@@ -8,10 +8,10 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func, inspect, MetaData
 
-
 from json import loads, dumps
 
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 
 
 #################################################
@@ -37,8 +37,8 @@ CityData = metadata_obj.tables["CityUnemployment"]
 # Flask Setup
 #################################################
 
-app = Flask(__name__,template_folder="templates")
-
+app = Flask(__name__)
+CORS(app)
 
 #################################################
 # Flask Routes
@@ -58,7 +58,7 @@ def welcome():
 
 
 
-@app.route("/USCityUnemploymentDATA")
+@app.route("/USCityUnemploymentDATA", methods=['GET'])
 def unemploymentDATA():
     """Return the city-level data (location, population, unemployment) as JSON"""
    
@@ -77,10 +77,10 @@ def unemploymentDATA():
 
     df_to_json = city_df.to_json(orient="records")
     parsed_json = loads(df_to_json)
-    json_map_data_python = dumps(parsed_json, indent=4)  
+    json_city_data = dumps(parsed_json, indent=4)  
 
-    
-    return json_map_data_python
+
+    return json_city_data
     
     session.close()
 

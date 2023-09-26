@@ -1,38 +1,26 @@
+// save API endpoint
+const baseUrl = "http://127.0.0.1:5000";
+const APIurl = baseUrl + "/USCityUnemploymentDATA";
+console.log('APIurl = ' + APIurl);
 
 
-let json_div_element = d3.select("#json");
-console.log(json_div_element);
+// D3 request to the API URL
+d3.json(APIurl).then(APIresponse => createUnemploymentMap(APIresponse));
+console.log('APIresponse = ' + APIresponse);
 
-let json_div_html = json_div_element.html;
-console.log(`json_div_html = ${json_div_html}`);
-
-let json_div_text = json_div_element.text;
-console.log(`json_div_text = ${json_div_text}`);
-
-let json2 = JSON.parse(json_div_text);
-console.log(`json2 = ${json2}`);
-
-
-
-let json_div_attr_data_value = json_div_element.attr('data-value');
-console.log(`json_div_attr_data_value = ${json_div_attr_data_value}`);
-
-
-console.log(json_div_element.items())
-
-createUnemploymentMap(json_city_data_from_sqlite_db);
 
 
 // function to define/create the features (specific earthquakes) and to create the map
-function createUnemploymentMap(json_city_data) {
+function createUnemploymentMap(city_data) {
 
+  console.log('API response / city_data = ' + city_data);
 
   let cityMarkers = [];
 
   // loop through the earthquakes/'features' array creating a new circle marker with detailed popup for each quake and pushing them into the quakeMarkers array
-  for (let i = 0; i < Object.keys(json_city_data).length; i++) {
+  for (let i = 0; i < Object.keys(city_data).length; i++) {
 
-    let city = json_city_data[i];
+    let city = city_data[i];
     console.log('city object = ' + city);
 
     let name = city.city;
@@ -41,14 +29,18 @@ function createUnemploymentMap(json_city_data) {
     let coordinates = [city.latitude,city.longitude];
     console.log('Coordinates = ' + coordinates);
 
-    let population = city.population;
+    let population = Number(city.population);
+    let population_string = population.toLocaleString();
     console.log('population = ' + population);
+    console.log('population_string = ' + population_string);
 
     let unemploymentRate = city.unemploymentRate;
     console.log('unemploymentRate = ' + unemploymentRate);
 
-    let unemploymentCount = city.unemploymentCount;
+    let unemploymentCount = Number(city.unemploymentCount);
+    let unemploymentCount_string = unemploymentCount.toLocaleString();
     console.log('unemploymentCount = ' + unemploymentCount);
+    console.log('unemploymentCount_string = ' + unemploymentCount_string);
 
     
     let colorBasedOnRate = '';
@@ -75,17 +67,16 @@ function createUnemploymentMap(json_city_data) {
       fillOpacity: 0.75,
       color: "black",
       fillColor: colorBasedOnRate,
-      radius: population
+      radius: Math.sqrt(population)*40
     };
     
     // create circle marker based on coordinates + attributes dict, with detailed popup showing additional info
     cityMarkers.push(
       L.circle(coordinates, featureAttributes)
       .bindPopup(`<h3>${name}</h3><hr>
-      Population: ${population}<br>
-      Unemployment Rate (August 2023): ${unemploymentRate}<br>
-      Unemployment Count (August 2023): ${unemploymentCount}<br>
-      Coordinates: ${coordinates}`)
+      Population: ${population_string}<br>
+      Unemployment Rate (August 2023): ${unemploymentRate}%<br>
+      Unemployment Count (August 2023): ${unemploymentCount_string}`)
     );
 
   }
@@ -114,16 +105,14 @@ function createUnemploymentMap(json_city_data) {
 
   // create overlayMaps object to hold our quakeLayer of earthquake markers with popups
   let overlayMaps = {
-    "Unemployment Data for Top 100 US Cities by Population": cityLayer
+    "August 2023 Unemployment Data for Top 100 US Cities by Population": cityLayer
   };
 
 
   // create map, passing streetmap and earthquakes layers to display on load, showing the entire world centered on [0,0]
   let myMap = L.map("map", {
-    center: [
-      0,0
-    ],
-    zoom: 2,
+    center: [39.8355, -99.0909],
+    zoom: 4,
     layers: [street, cityLayer]
   });
 
@@ -138,7 +127,8 @@ function createUnemploymentMap(json_city_data) {
     var div = L.DomUtil.create('div', 'unemployment legend');
     div.style.backgroundColor = "white";
     div.style.border = "thin solid black";
-    div.innerHTML = '<h3>Unemployment rate (km)</h3><svg width="10" height="10"><rect width="10" height="10" fill="#663399"/></svg>  0-1%<br><svg width="10" height="10"><rect width="10" height="10" fill="#0000FF"/></svg>  1-2%<br><svg width="10" height="10"><rect width="10" height="10" fill="#006400"/></svg>  2-3%<br><svg width="10" height="10"><rect width="10" height="10" fill="#FFFF00"/></svg>  3-4%<br><svg width="10" height="10"><rect width="10" height="10" fill="#FFA500"/></svg>  4-5%<br><svg width="10" height="10"><rect width="10" height="10" fill="#FF0000"/></svg>  >5%<br>';
+    div.style.padding = "0px 10px 10px";
+    div.innerHTML = '<h3>Unemployment Rate<br>(August 2023)</h3><svg width="10" height="10"><rect width="10" height="10" fill="#663399"/></svg>  0-1%<br><svg width="10" height="10"><rect width="10" height="10" fill="#0000FF"/></svg>  1-2%<br><svg width="10" height="10"><rect width="10" height="10" fill="#006400"/></svg>  2-3%<br><svg width="10" height="10"><rect width="10" height="10" fill="#FFFF00"/></svg>  3-4%<br><svg width="10" height="10"><rect width="10" height="10" fill="#FFA500"/></svg>  4-5%<br><svg width="10" height="10"><rect width="10" height="10" fill="#FF0000"/></svg>  >5%<br>';
     return div;        
   };
 
