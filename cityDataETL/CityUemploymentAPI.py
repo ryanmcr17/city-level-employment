@@ -18,7 +18,7 @@ from flask_cors import CORS
 # Database Setup
 #################################################
 
-engine = create_engine("sqlite:///cityDataETL/city_db.sqlite")
+engine = create_engine("sqlite:///city_db.sqlite")
 
 insp = inspect(engine)
 print(insp.get_table_names())

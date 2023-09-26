@@ -5,7 +5,7 @@ console.log('APIurl = ' + APIurl);
 
 
 // D3 request to the API URL
-d3.json(APIurl).then(APIresponse => createUnemploymentMap(APIresponse));
+d3.json(APIurl).then(APIresponse => createUnemploymentMap(APIresponse)).catch(console.log("No response from the API - make sure the Flask API is active/serving"));
 console.log('APIresponse = ' + APIresponse);
 
 
