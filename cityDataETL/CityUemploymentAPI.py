@@ -86,37 +86,6 @@ def unemploymentDATA():
 
 
 
-@app.route("/USCityUnemploymentMap")
-def unemploymentMap():
-    """Return the HTML page with map, passing  city-level data (location, population, unemployment) as JSON with the render_template call"""
-   
-    # Create our session (link) from Python to the DB
-    session = Session(engine)
-
-
-    # Query all city unemployment data from the database + tranfer to DF then to dictionary then return as JSON
-
-    city_data = session.query(CityData).all()
-
-    city_df = pd.DataFrame([(cd.city, cd.latitude, cd.longitude, cd.population, cd.unemploymentRate, cd.unemploymentCount) for cd in city_data], columns=['city', 'latitude','longitude','population','unemploymentRate','unemploymentCount'])
-
-    print(city_df)
-
-
-    df_to_json = city_df.to_json(orient="records")
-    parsed_json = loads(df_to_json)
-    print(parsed_json)
-
-    json_city_data_string = dumps(parsed_json)
-    print(json_city_data_string)
-    
-
-    return render_template('map.html',data=parsed_json)
-    
-    session.close()
-
-
-
 @app.route("/TopCityUnemployment")
 def cityUnemployment():
     return render_template('map.html')

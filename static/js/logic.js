@@ -16,6 +16,7 @@ function createUnemploymentMap(city_data) {
   console.log('API response / city_data = ' + city_data);
 
   let cityMarkers = [];
+  let cityMarkers2 = [];
 
   // loop through the earthquakes/'features' array creating a new circle marker with detailed popup for each quake and pushing them into the quakeMarkers array
   for (let i = 0; i < Object.keys(city_data).length; i++) {
@@ -63,27 +64,51 @@ function createUnemploymentMap(city_data) {
 
     // save attributes dict/JSON for circle marker
     let featureAttributes = {
-      stroke: false,
       fillOpacity: 0.75,
-      color: "black",
       fillColor: colorBasedOnRate,
-      radius: Math.sqrt(population)*40
+      radius: Math.sqrt(population)*40,
+      stroke: true,
+      color: "black",
+      weight: 0.5
     };
     
     // create circle marker based on coordinates + attributes dict, with detailed popup showing additional info
     cityMarkers.push(
       L.circle(coordinates, featureAttributes)
       .bindPopup(`<h3>${name}</h3><hr>
-      Population: ${population_string}<br>
       Unemployment Rate (August 2023): ${unemploymentRate}%<br>
       Unemployment Count (August 2023): ${unemploymentCount_string}`)
     );
+
+
+
+    // save attributes dict/JSON for circle marker
+    let featureAttributes2 = {
+      fillOpacity: 0.75,
+      fillColor: colorBasedOnRate,
+      radius: Math.pow(unemploymentRate,2.5)*1000,
+      stroke: true,
+      color: "black",
+      weight: 0.5
+    };
+    
+    // create circle marker based on coordinates + attributes dict, with detailed popup showing additional info
+    cityMarkers2.push(
+      L.circle(coordinates, featureAttributes2)
+      .bindPopup(`<h3>${name}</h3><hr>
+      Unemployment Rate (August 2023): ${unemploymentRate}%<br>
+      Unemployment Count (August 2023): ${unemploymentCount_string}`)
+    );
+
+
+
 
   }
 
 
   // create overlay layer from quakeMarkers array
   let cityLayer = L.layerGroup(cityMarkers);
+  let cityLayer2 = L.layerGroup(cityMarkers2);
 
 
   // create base layers
@@ -105,7 +130,8 @@ function createUnemploymentMap(city_data) {
 
   // create overlayMaps object to hold our quakeLayer of earthquake markers with popups
   let overlayMaps = {
-    "August 2023 Unemployment Data for Top 100 US Cities by Population": cityLayer
+    "Unemployment Data, Top 100 US Cities (size represents population)": cityLayer,
+    "Unemployment Data, Top 100 US Cities (size represents unemployment rate)": cityLayer2,
   };
 
 
