@@ -162,4 +162,67 @@ function createUnemploymentMap(city_data) {
   }).addTo(myMap);
 
 
+
+
+
+  let names = [];
+  let rates = [];
+
+  // loop through the city data provided by the API in JSON format to create a new circle marker with popup for each city
+  for (let i = 0; i < Object.keys(city_data).length; i++) {
+
+    let city = city_data[i];
+    console.log('city object = ' + city);
+
+    let name = city.city;
+    console.log('city name = ' + name);
+
+    let population = Number(city.population);
+    let population_string = population.toLocaleString();
+    console.log('population = ' + population);
+    console.log('population_string = ' + population_string);
+
+    let unemploymentRate = city.unemploymentRate;
+    console.log('unemploymentRate = ' + unemploymentRate);
+
+    let unemploymentCount = Number(city.unemploymentCount);
+    let unemploymentCount_string = unemploymentCount.toLocaleString();
+    console.log('unemploymentCount = ' + unemploymentCount);
+    console.log('unemploymentCount_string = ' + unemploymentCount_string);
+
+    names.push(name)
+    rates.push(unemploymentRate)
+
+  // define arrays containing OTU IDs, OTU labels, and sample values for top 10 OTUs by sample value
+  var top10CityNames = names.slice(0,10).reverse();
+  var top10Cityrates = rates.slice(0,10).reverse();
+
+  // define trace for horizontal bar chart
+  var barTrace1 = {
+      x: top10Cityrates,
+      y: top10CityNames,
+      name: "Unemployment Rate: Top 10 Cities by Population",
+      type: "bar",
+      orientation: "h"
+  };
+
+  // set traces/data to be plotted
+  var barTraces = [barTrace1];
+
+  // set layout
+  var barLayout = {
+  title: "Unemployment Rate: Top 10 Cities by Population",
+  margin: {
+      l: 100,
+      r: 100,
+      t: 100,
+      b: 100
+  }
+  };
+
+  // render plot to <div id="bar"≥
+  Plotly.newPlot("bar", barTraces, barLayout);
+
+  };
+
 };
