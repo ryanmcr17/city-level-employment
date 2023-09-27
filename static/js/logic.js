@@ -4,13 +4,13 @@ const APIurl = baseUrl + "/USCityUnemploymentDATA";
 console.log('APIurl = ' + APIurl);
 
 
-// D3 request to the API URL
+// D3 request to the Flask API URL
 d3.json(APIurl).then(APIresponse => createUnemploymentMap(APIresponse)).catch(console.log("No response from the API - make sure the Flask API is active/serving"));
 console.log('APIresponse = ' + APIresponse);
 
 
 
-// function to define/create the features (specific earthquakes) and to create the map
+// function to define/create the map markers (specific cities with unemployment data) and to create the map
 function createUnemploymentMap(city_data) {
 
   console.log('API response / city_data = ' + city_data);
@@ -18,7 +18,7 @@ function createUnemploymentMap(city_data) {
   let cityMarkers = [];
   let cityMarkers2 = [];
 
-  // loop through the earthquakes/'features' array creating a new circle marker with detailed popup for each quake and pushing them into the quakeMarkers array
+  // loop through the city data provided by the API in JSON format to create a new circle marker with popup for each city
   for (let i = 0; i < Object.keys(city_data).length; i++) {
 
     let city = city_data[i];
@@ -46,7 +46,7 @@ function createUnemploymentMap(city_data) {
     
     let colorBasedOnRate = '';
 
-    // determine color to use based on depth of quake
+    // determine color to use based on unemployment rate
     if (unemploymentRate < 1) {
       colorBasedOnRate = '#663399';
     }   else if (unemploymentRate < 2) {
@@ -62,7 +62,7 @@ function createUnemploymentMap(city_data) {
     };
     console.log('colorBasedOnRate = ' + colorBasedOnRate);
 
-    // save attributes dict/JSON for circle marker
+    // save attributes dict for first set of circle markers
     let featureAttributes = {
       fillOpacity: 0.75,
       fillColor: colorBasedOnRate,
@@ -72,7 +72,7 @@ function createUnemploymentMap(city_data) {
       weight: 0.5
     };
     
-    // create circle marker based on coordinates + attributes dict, with detailed popup showing additional info
+    // create first set of circle markers based on coordinates + attributes dict
     cityMarkers.push(
       L.circle(coordinates, featureAttributes)
       .bindPopup(`<h3>${name}</h3><hr>
@@ -80,7 +80,7 @@ function createUnemploymentMap(city_data) {
       Unemployment Count (August 2023): ${unemploymentCount_string}`)
     );
 
-    // save attributes dict/JSON for circle marker
+// save attributes dict for second set of circle markers
     let featureAttributes2 = {
       fillOpacity: 0.75,
       fillColor: colorBasedOnRate,
@@ -90,7 +90,7 @@ function createUnemploymentMap(city_data) {
       weight: 0.5
     };
     
-    // create circle marker based on coordinates + attributes dict, with detailed popup showing additional info
+    // create second set of circle markers based on coordinates + attributes dict
     cityMarkers2.push(
       L.circle(coordinates, featureAttributes2)
       .bindPopup(`<h3>${name}</h3><hr>
@@ -101,7 +101,7 @@ function createUnemploymentMap(city_data) {
   }
 
 
-  // create overlay layer from quakeMarkers array
+  // create overlay layers from each set of city markers
   let cityLayer = L.layerGroup(cityMarkers);
   let cityLayer2 = L.layerGroup(cityMarkers2);
 
@@ -123,14 +123,14 @@ function createUnemploymentMap(city_data) {
   };
 
 
-  // create overlayMaps object to hold our quakeLayer of earthquake markers with popups
+  // create overlayMaps object to display city-unemployment layers of circle markers
   let overlayMaps = {
     "Unemployment Data, Top 100 US Cities (size represents population)": cityLayer,
     "Unemployment Data, Top 100 US Cities (size represents unemployment rate)": cityLayer2,
   };
 
 
-  // create map, passing streetmap and earthquakes layers to display on load, showing the entire world centered on [0,0]
+  // create map, passing streetmap and first layer of city-unemployment circle markers to display on load, centered on the continental US
   let myMap = L.map("map", {
     center: [39.8355, -99.0909],
     zoom: 4,
@@ -138,7 +138,7 @@ function createUnemploymentMap(city_data) {
   });
 
   
-  // add a legend showing how the marker colors represent earthquake depth
+  // add a legend showing how the marker colors represent unemployment depth
 
   var legend = L.control({
     position: 'bottomright'
