@@ -190,16 +190,16 @@ function createUnemploymentMap(city_data) {
     console.log('unemploymentCount = ' + unemploymentCount);
     console.log('unemploymentCount_string = ' + unemploymentCount_string);
 
-    names.push(name)
-    rates.push(unemploymentRate)
+    names.push(name);
+    rates.push(unemploymentRate);
 
   // define arrays containing OTU IDs, OTU labels, and sample values for top 10 OTUs by sample value
   var top10CityNames = names.slice(0,10).reverse();
-  var top10Cityrates = rates.slice(0,10).reverse();
+  var top10CityRates = rates.slice(0,10).reverse();
 
   // define trace for horizontal bar chart
   var barTrace1 = {
-      x: top10Cityrates,
+      x: top10CityRates,
       y: top10CityNames,
       name: "Unemployment Rate: Top 10 Cities by Population",
       type: "bar",
@@ -212,16 +212,12 @@ function createUnemploymentMap(city_data) {
   // set layout
   var barLayout = {
   title: "Unemployment Rate: Top 10 Cities by Population",
-  margin: {
-      l: 100,
-      r: 100,
-      t: 100,
-      b: 100
-  }
   };
 
   // render plot to <div id="bar"≥
   Plotly.newPlot("bar", barTraces, barLayout);
+
+
 
   };
 
