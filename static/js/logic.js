@@ -80,8 +80,6 @@ function createUnemploymentMap(city_data) {
       Unemployment Count (August 2023): ${unemploymentCount_string}`)
     );
 
-
-
     // save attributes dict/JSON for circle marker
     let featureAttributes2 = {
       fillOpacity: 0.75,
@@ -99,9 +97,6 @@ function createUnemploymentMap(city_data) {
       Unemployment Rate (August 2023): ${unemploymentRate}%<br>
       Unemployment Count (August 2023): ${unemploymentCount_string}`)
     );
-
-
-
 
   }
 

@@ -49,10 +49,7 @@ def welcome():
     """List all available options."""
     return (
         f"Available Routes:<br/>"
-        f"/USCityUnemploymentMap<br/>"
         f"/USCityUnemploymentDATA<br/>"
-        f"/TopCityUnemployment<br/>"
-        f"/TopCityUnemployment/<city>"
     )
 
 
@@ -84,12 +81,6 @@ def unemploymentDATA():
     
     session.close()
 
-
-
-@app.route("/TopCityUnemployment")
-def cityUnemployment():
-    return render_template('map.html')
-    
 
 
 if __name__ == '__main__':
